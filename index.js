@@ -117,7 +117,6 @@ function protectRoutes(site) {
 
 /**
  * middleware to show login page
- * @param {function} tpl
  * @param {object} site
  * @param {array} currentProviders
  * @returns {function}
@@ -172,7 +171,7 @@ function onLogout(site) {
  * the error by re-directing the user to the login page and logging
  * them out of their current session
  *
- * @param  {Object} site
+ * @param {Object} site
  * @returns {Function}
  */
 function checkAuthentication(site) {

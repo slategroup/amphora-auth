@@ -3,7 +3,7 @@ module.exports = {
   'env': {
     'browser': false,
     'node': true,
-    'mocha': true,
+    'jest': true,
     'es6': true
   },
   // add global vars for chai, etc

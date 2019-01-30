@@ -90,3 +90,8 @@ function addAuthRoutes(router, site, provider) {
 
 module.exports = createLDAPStrategy;
 module.exports.addAuthRoutes = addAuthRoutes;
+
+// For testing purposes
+module.exports.verifyLdap = verifyLdap;
+module.exports.rejectBasicAuth = rejectBasicAuth;
+module.exports.checkCredentials = checkCredentials;
