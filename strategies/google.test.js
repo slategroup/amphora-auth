@@ -8,18 +8,17 @@ const _startCase = require('lodash/startCase'),
 
 describe(_startCase(filename), function () {
   describe('createGoogleStrategy', function () {
-    const siteStub = {
-      slug: 'foo'
-    };
+    const siteStub = { slug: 'foo' };
 
     it('creates google strategy', function () {
       passport.use = jest.fn();
 
       process.env.GOOGLE_CONSUMER_KEY = '123';
       process.env.GOOGLE_CONSUMER_SECRET = '456';
+      process.env.GOOGLE_PROFILE_URL = 'http://foo.com',
       lib(siteStub);
 
-      expect(passport.use).toBeCalledWith('google-foo');
+      expect(passport.use).toBeCalled();
     });
   });
 

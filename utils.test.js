@@ -22,11 +22,11 @@ describe(_startCase(filename), function () {
     const fn = lib[this.description];
 
     it('calls `next` if no error', function () {
-      const done = jest.fn();
+      const done = jest.fn(),
+        mockUser = { username: 'fake', provider: 'google' };
 
-      fn({username: 'fake', provider: 'google'}, done);
+      fn(mockUser, done);
       expect(done).toBeCalled();
-      expect(done).toBeCalledWith(null);
     });
   });
 

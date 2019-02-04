@@ -21,7 +21,7 @@ function createSlackStrategy(site) {
     clientSecret: process.env.SLACK_CONSUMER_SECRET,
     callbackURL: getCallbackUrl(site, 'slack'),
     passReqToCallback: true,
-    scope: 'users:read'
+    scope: ['identity.basic', 'users:read']
   },
   verify({
     username: '_json.user',

@@ -27,7 +27,8 @@ function unauthorized(res) {
     message = removePrefix(err.message, ':'),
     code = 401;
 
-  res.stats(code).json({ code, message });
+  res.statusCode = code;
+  res.json({ code, message });
 }
 
 /**
@@ -88,7 +89,7 @@ function isAuthenticated(site) {
       next(); // already logged in
     } else if (req.get('Authorization')) {
       // try to authenticate with api key
-      passport.authenticate('apikey', { session: false})(req, res, next);
+      passport.authenticate('apikey', { session: false })(req, res, next);
     } else {
       req.session.returnTo = req.originalUrl; // redirect to this page after logging in
       // otherwise redirect to login
@@ -185,14 +186,15 @@ function checkAuthentication(site) {
 }
 
 /**
- * initialize authentication
- * @param {express.Router} router
- * @param {array} providers (may be empty array)
- * @param {object} site config for the site
- * @param {object} storage
- * @returns {array}
+ * Initialize authentication
+ * @param {object} params
+ * @param {express.Router} params.router
+ * @param {object[]} params.providers (may be empty array)
+ * @param {object} params.site //config for the site
+ * @param {object} params.storage
+ * @returns {object[]}
  */
-function init(router, providers, site, storage) {
+function init({ router, providers, site, storage }) {
   if (_isEmpty(providers)) {
     return []; // exit early if no providers are passed in
   }

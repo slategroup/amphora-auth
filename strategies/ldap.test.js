@@ -8,14 +8,16 @@ const _startCase = require('lodash/startCase'),
   filename = __filename.split('/').pop().split('.').shift(),
   lib = require(`./${filename}`);
 
-console.log(filename);
-
 describe(_startCase(filename), function () {
   describe('verifyLdap', function () {
     const fn = lib[this.description];
 
     it('calls verify with a slightly different function signature', function (done) {
       utils.verify = jest.fn(() => (req, token, tokenSecret, profile, cb) => cb()) // eslint-disable-line
+
+      process.env.LDAP_URL = 'http://foo.bar';
+      process.env.LDAP_BIND_DN = '123';
+      process.env.LDAP_BIND_CREDENTIALS = '456';
 
       fn({})({}, {}, function () {
         expect(utils.verify).toBeCalled();
@@ -25,16 +27,14 @@ describe(_startCase(filename), function () {
   });
 
   describe('createLDAPStrategy', function () {
-    const siteStub = {
-      slug: 'foo'
-    };
+    const siteStub = { slug: 'foo' };
 
     it('creates ldap strategy', function () {
       passport.use = jest.fn();
 
       lib(siteStub);
 
-      expect(passport.use).toBeCalledWith('ldap-foo');
+      expect(passport.use).toBeCalled();
     });
   });
 
@@ -69,7 +69,7 @@ describe(_startCase(filename), function () {
       const res = { setHeader: jest.fn(), end: _noop };
 
       fn(res);
-      expect(res.setHeader).toBeCalledWith('WWW-Authenticate');
+      expect(res.setHeader).toBeCalledWith('WWW-Authenticate', 'Basic');
     });
 
     it('calls res.end()', function () {

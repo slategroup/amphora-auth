@@ -19,7 +19,7 @@ describe(_startCase(filename), function () {
       process.env.TWITTER_CONSUMER_SECRET = '456';
       lib(siteStub);
 
-      expect(passport.use).toHaveBeenCalledWith('twitter-foo');
+      expect(passport.use).toBeCalled();
     });
   });
 

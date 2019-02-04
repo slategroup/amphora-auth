@@ -37,14 +37,12 @@ describe(_startCase(filename), function () {
   });
 
   describe('createAPIKeyStrategy', function () {
-    const fn = lib[this.description];
-
     it('creates apikey strategy', function () {
       passport.use = jest.fn();
 
-      fn();
+      lib();
 
-      expect(passport.use).toBeCalledWith('apikey');
+      expect(passport.use).toBeCalled();
     });
   });
 

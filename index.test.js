@@ -39,10 +39,10 @@ describe(_startCase(filename), function () {
     });
 
     it('calls apikey auth if Authorization header is sent', function (done) {
-      passport.authenticate = jest.fn();
+      passport.authenticate = jest.fn().mockReturnValue((req, res, next) => next());
 
       fn()({ isAuthenticated: () => false, get: () => true }, null, function () {
-        expect(passport.authenticate.call.length).toEqual(1);
+        expect(passport.authenticate).toBeCalled();
         done();
       });
     });
@@ -112,20 +112,22 @@ describe(_startCase(filename), function () {
   });
 
   describe('onLogin', function () {
-    const fn = lib[this.description];
+    const fn = lib[this.description],
+      mockRes = {
+        setHeader: jest.fn(),
+        send: jest.fn(),
+        end: jest.fn(),
+      };
 
     it('shows the login page if there are no errors', function () {
-      const tpl = jest.fn();
-
-      fn(tpl, { path: '' }, [])({ flash: _noop }, { send: _noop });
-      expect(tpl).toBeCalled();
+      fn({ path: '' }, [])({ flash: _noop }, mockRes);
+      expect(mockRes.send).toBeCalled();
     });
 
     it('forcibly clears http credentials if there is a credential error', function () {
-      const tpl = jest.fn();
-
-      fn(tpl, { path: '' }, [])({ flash: function () { return { error: ['Invalid username/password'] }; } }, { setHeader: _noop, send: _noop, end: _noop });
-      expect(tpl).not.toBeCalled();
+      fn({ path: '' }, [])({ flash: function () { return { error: ['Invalid username/password'] }; } }, mockRes);
+      expect(mockRes.setHeader).toBeCalledWith('WWW-Authenticate', 'Basic realm="Incorrect Credentials"');
+      expect(mockRes.end).toBeCalledWith('Access denied');
     });
   });
 
@@ -153,7 +155,12 @@ describe(_startCase(filename), function () {
         user: {
           auth: 'write'
         }
+      },
+      mockRes = {
+        json: jest.fn(),
       };
+
+    lib.unauthorized = jest.fn();
 
     it('throws an error if userLevel is undefined', function () {
       const next = jest.fn(),
@@ -165,15 +172,15 @@ describe(_startCase(filename), function () {
     it('sends unauthorized response if user does not have proper permissions', function () {
       const next = jest.fn();
 
-      fn('admin')(reqObj, {}, next);
+      fn('admin')(reqObj, mockRes, next);
       expect(next).not.toBeCalled();
-      expect(lib.unauthorized).toBeCalled();
+      expect(mockRes.json).toBeCalled();
     });
 
     it('calls next if the user has the appropriate level', function () {
       const next = jest.fn();
 
-      fn('write')(reqObj, {}, next);
+      fn('write')(reqObj, mockRes, next);
       expect(next).toBeCalled();
       expect(lib.unauthorized).not.toBeCalled();
     });

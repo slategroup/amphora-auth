@@ -20,6 +20,7 @@ function createGoogleStrategy(site) {
     clientID: process.env.GOOGLE_CONSUMER_KEY,
     clientSecret: process.env.GOOGLE_CONSUMER_SECRET,
     callbackURL: getCallbackUrl(site, 'google'),
+    userProfileURL: process.env.GOOGLE_PROFILE_URL,
     passReqToCallback: true
   },
   verify({
