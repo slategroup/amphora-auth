@@ -157,6 +157,7 @@ describe(_startCase(filename), function () {
         }
       },
       mockRes = {
+        status: jest.fn().mockReturnThis(),
         json: jest.fn(),
       };
 
@@ -174,6 +175,7 @@ describe(_startCase(filename), function () {
 
       fn('admin')(reqObj, mockRes, next);
       expect(next).not.toBeCalled();
+      expect(mockRes.status).toBeCalled();
       expect(mockRes.json).toBeCalled();
     });
 

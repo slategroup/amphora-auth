@@ -27,8 +27,7 @@ function unauthorized(res) {
     message = removePrefix(err.message, ':'),
     code = 401;
 
-  res.statusCode = code;
-  res.json({ code, message });
+  res.status(code).json({ code, message });
 }
 
 /**
