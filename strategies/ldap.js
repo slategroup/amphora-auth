@@ -3,7 +3,7 @@
 const passport = require('passport'),
   LDAPStrategy = require('passport-ldapauth'),
   basicAuth = require('basic-auth'),
-  { verify, getAuthUrl, getPathOrBase, generateStrategyName } = require('../utils');
+  utils = require('../utils');
 
 /**
  * verify LDAP auth a little differently
@@ -15,7 +15,7 @@ function verifyLdap(site) {
   return function (req, user, done) {
     // the callback for LDAP is different than oauth, so we need to
     // pass different options to verify()
-    verify({ // allows this to be mocked in tests
+    utils.verify({ // allows this to be mocked in tests
       username: 'sAMAccountName',
       imageUrl: '', // ldap generally has no images
       name: 'displayName',
@@ -78,15 +78,20 @@ function checkCredentials(req, res, next) {
  * @param {object} provider
  */
 function addAuthRoutes(router, site, provider) {
-  const strategy = generateStrategyName(provider, site);
+  const strategy = utils.generateStrategyName(provider, site);
 
   router.get(`/_auth/${provider}`, checkCredentials, passport.authenticate(strategy, {
     // passport options
-    failureRedirect: `${getAuthUrl(site)}/login`,
+    failureRedirect: `${utils.getAuthUrl(site)}/login`,
     failureFlash: true,
-    successReturnToOrRedirect: getPathOrBase(site)
+    successReturnToOrRedirect: utils.getPathOrBase(site)
   }));
 }
 
 module.exports = createLDAPStrategy;
 module.exports.addAuthRoutes = addAuthRoutes;
+
+// For testing purposes
+module.exports.verifyLdap = verifyLdap;
+module.exports.rejectBasicAuth = rejectBasicAuth;
+module.exports.checkCredentials = checkCredentials;

@@ -48,3 +48,6 @@ function addAuthRoutes(router, site, provider) {
 
 module.exports = createAPIKeyStrategy;
 module.exports.addAuthRoutes = addAuthRoutes;
+
+// For testing purposes
+module.exports.apiCallback = apiCallback;
