@@ -116,12 +116,23 @@
           <span class="button-text">Log out</span>
         </a>
       {{else}}
-        {{#each currentProviders }}
+        {{#each currentProviders}}
           <a class="button {{this.name}}" href="{{ this.url }}" title="{{ this.title }}">
             <div class="button-icon">{{> ( icon ) }}</div>
             <span class="button-text">{{ this.title }}</span>
           </a>
         {{/each}}
+          <form action="/_auth/local" method="POST">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input id="username" name="username" type="text" />
+            </div><br />
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input id="password" name="password" type="password" />
+            </div>
+            <input type="submit" value="Submit" />
+          </form>
       {{/if}}
     </div>
   </div>

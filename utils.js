@@ -65,10 +65,15 @@ function getCallbackUrl(site, provider) {
  */
 function verify(properties) {
   return function (req, token, tokenSecret, profile, done) { // eslint-disable-line
+    console.log('VERIFYING USER');
+
     const username = _get(profile, properties.username),
       imageUrl = _get(profile, properties.imageUrl),
       name = _get(profile, properties.name),
+      password = _get(profile, properties.password),
       provider = properties.provider;
+
+    console.log({ username, password });
 
     if (!username) {
       throw new Error('Provider hasn\'t given a username at ' + properties.username);

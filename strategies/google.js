@@ -11,7 +11,7 @@ const passport = require('passport'),
   } = require('../utils');
 
 /**
- * Google authenticatio strategy
+ * Google authentication strategy
  *
  * @param {object} site
  */
