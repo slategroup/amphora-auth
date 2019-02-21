@@ -61,7 +61,6 @@ function getCallbackUrl(site, provider) {
  * create/authenticate against a clay user
  *
  * @param {object} properties to grab from provider and provider name itself
- * @param {object} site
  * @returns {Promise}
  */
 function verify(properties) {
@@ -76,7 +75,7 @@ function verify(properties) {
     }
 
     // get UID
-    let uid = `/_users/${encode(`${username.toLowerCase()}`, provider)}`;
+    let uid = `/_users/${encode(username.toLowerCase(), provider)}`;
 
     if (!req.user) {
       // first time logging in! update the user data
