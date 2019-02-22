@@ -30,6 +30,7 @@
 
       .login-options {
         max-width: 600px;
+        margin: 0 auto;
         min-height: 60vh;
         width: 90vw;
       }
@@ -88,6 +89,48 @@
       .button-text {
         margin-top: 10px;
       }
+
+      .login-form {
+        background: #FFFFFF;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        margin: 0 auto 100px;
+        max-width: 360px;
+        padding: 45px;
+        position: relative;
+        text-align: center;
+        z-index: 1;
+      }
+
+      .login-form button {
+        background: #487EB0;
+        border: 0;
+        color: #FFFFFF;
+        cursor: pointer;
+        font-size: 14px;
+        outline: 0;
+        padding: 15px;
+        margin: 15px 0 0 0;
+        -webkit-transition: all 0.3 ease;
+        text-transform: uppercase;
+        transition: all 0.3 ease;
+        width: 100%;
+      }
+
+      .login-form button:hover,
+      .login-form button:active,
+      .login-form button:focus {
+        background: #40739E;
+      }
+
+      .login-form input {
+        background: #f2f2f2;
+        border: 0;
+        box-sizing: border-box;
+        font-size: 14px;
+        outline: 0;
+        padding: 15px;
+        width: 100%;
+      }
     </style>
 </head>
 <body class="login-page">
@@ -107,7 +150,7 @@
       <p class="details">You are currently logged in to Clay</p>
     {{else}}
       <h1 class="header">Log in to Clay</h1>
-      <p class="details">Please choose the provider attached to your account</p>
+      {{#if currentProviders}}<p class="details">Please choose the provider attached to your account</p>{{/if}}
     {{/with}}
     <div class="buttons">
       {{#if user}}
@@ -122,19 +165,17 @@
             <span class="button-text">{{ this.title }}</span>
           </a>
         {{/each}}
-          <form action="/_auth/local" method="POST">
-            <div class="form-group">
-              <label for="username">Username</label>
-              <input id="username" name="username" type="text" />
-            </div><br />
-            <div class="form-group">
-              <label for="password">Password</label>
-              <input id="password" name="password" type="password" />
-            </div>
-            <input type="submit" value="Submit" />
-          </form>
       {{/if}}
     </div>
+    <form class="login-form" action="/_auth/local1" method="post">
+      <div class="form-group">
+        <input id="username" name="username" type="text" placeholder="Username" />
+      </div><br />
+      <div class="form-group">
+        <input id="password" name="password" type="password" placeholder="Password" />
+      </div>
+      <button type="submit">Login</button>
+    </form>
   </div>
 </body>
 </html>

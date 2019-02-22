@@ -64,6 +64,7 @@ function getCallbackUrl(site, provider) {
  * @returns {Promise}
  */
 function verify(properties) {
+  console.log('VERIFY');
   return function (req, token, tokenSecret, profile, done) { // eslint-disable-line
     console.log('VERIFYING USER');
 
@@ -150,12 +151,15 @@ function deserializeUser(uid, done) {
  * @returns {Object[]}
  */
 function getProviders(providers, site) {
-  return _map(_reject(providers, provider => provider === 'apikey'), provider => ({
-    name: provider,
-    url: `${getAuthUrl(site)}/${provider}`,
-    title: `Log in with ${_capitalize(provider)}`,
-    icon: _constant(provider) // a function that returns the provider
-  }));
+  return _map(
+    _reject(providers, provider => provider === 'apikey' || provider === 'local'),
+    provider => ({
+      name: provider,
+      url: `${getAuthUrl(site)}/${provider}`,
+      title: `Log in with ${_capitalize(provider)}`,
+      icon: _constant(provider) // a function that returns the provider
+    })
+  );
 }
 
 /**
