@@ -10,8 +10,9 @@ const _get = require('lodash/get'),
   fs = require('fs'),
   path = require('path'),
   handlebars = require('handlebars'),
-  references = require('./references');
-let db; // Storage module passed from Amphora. Assigned value at initialization
+  references = require('./references'),
+  { isValidPassword } = require('./services/encrypt'),
+  db = require('./services/storage');
 
 /**
  * encode username and provider to base64
@@ -64,17 +65,12 @@ function getCallbackUrl(site, provider) {
  * @returns {Promise}
  */
 function verify(properties) {
-  console.log('VERIFY');
   return function (req, token, tokenSecret, profile, done) { // eslint-disable-line
-    console.log('VERIFYING USER');
-
     const username = _get(profile, properties.username),
-      imageUrl = _get(profile, properties.imageUrl),
-      name = _get(profile, properties.name),
-      password = _get(profile, properties.password),
+      imageUrl = _get(profile, properties.imageUrl, ''),
+      name = _get(profile, properties.name, ''),
+      password = _get(profile, properties.password, ''),
       provider = properties.provider;
-
-    console.log({ username, password });
 
     if (!username) {
       throw new Error('Provider hasn\'t given a username at ' + properties.username);
@@ -86,25 +82,37 @@ function verify(properties) {
     if (!req.user) {
       // first time logging in! update the user data
       return db.get(uid)
-        .then(function (data) {
+        .then(data => {
+          const parsedData = JSON.parse(data);
+
           // only update the user data if the property doesn't exist (name might have been changed through the kiln UI)
-          return _defaults(data, {
+          return _defaults(parsedData, {
             imageUrl: imageUrl,
             name: name
           });
         })
-        .then(function (data) {
+        .then(data => {
           return db.put(uid, JSON.stringify(data))
-            .then(() => done(null, data))
+            .then(() => {
+              if (!isValidPassword(data, password)) {
+                return done(null, false, { message: 'Invalid Password' });
+              }
+
+              return done(null, data);
+            })
             .catch(e => done(e));
         })
-        .catch(() => {
-          done(null, false, { message: 'User not found!' });
-        }); // no user found
+        .catch(() => done(null, false, { message: 'User not found!' })); // no user found
     } else {
       // already authenticated. just grab the user data
       return db.get(uid)
-        .then((data) => done(null, data))
+        .then(data => {
+          if (!isValidPassword(data, password)) {
+            return done(null, false, { message: 'Invalid Password' });
+          }
+
+          return done(null, data);
+        })
         .catch(() => done(null, false, { message: 'User not found!' })); // no user found
     }
   };
@@ -182,7 +190,6 @@ function compileTemplate(filename) {
 }
 
 module.exports.encode = encode;
-module.exports.setDb = storage => db = storage;
 module.exports.getPathOrBase = getPathOrBase;
 module.exports.getAuthUrl = getAuthUrl;
 module.exports.getCallbackUrl = getCallbackUrl;

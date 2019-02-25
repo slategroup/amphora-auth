@@ -15,8 +15,6 @@ const passport = require('passport'),
  * @param {object} site
  */
 function createLocalStrategy(site) {
-  console.log('CREATING LOCAL STRATEGY', `local-${site.slug}`);
-
   passport.use(
     `local-${site.slug}`,
     new LocalStrategy({ passReqToCallback: true }, verifyLocal())
@@ -28,11 +26,7 @@ function createLocalStrategy(site) {
  * @returns {function}
  */
 function verifyLocal() {
-  console.log('VERIFY LOCAL');
-
   return function (req, username, password, done) {
-    console.log('CALLING UTILS VERIFY');
-
     verify({
       username: 'username',
       password: 'password',
@@ -50,7 +44,7 @@ function verifyLocal() {
 function addAuthRoutes(router, site, provider) {
   const strategy = generateStrategyName(provider, site);
 
-  router.post(`/_auth/${provider}`, passport.authenticate(strategy, {
+  router.get(`/_auth/${provider}`, passport.authenticate(strategy, {
     failureRedirect: `${getAuthUrl(site)}/login`,
     failureFlash: true,
     successReturnToOrRedirect: getPathOrBase(site)

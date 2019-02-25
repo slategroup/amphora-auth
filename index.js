@@ -9,14 +9,15 @@ const _get = require('lodash/get'),
     getAuthUrl,
     getPathOrBase,
     removePrefix,
-    setDb,
     serializeUser,
     deserializeUser,
     getProviders
   } = require('./utils'),
   sessionStore = require('./session-store'),
   { addAuthRoutes, createStrategy } = require('./strategies'),
-  { AUTH_LEVELS } = require('./constants');
+  { AUTH_LEVELS } = require('./constants'),
+  { setDb } = require('./services/storage'),
+  { createUser, setBus } = require('./controllers/users');
 
 /**
  * Creates an error message for unathorized requests.
@@ -74,7 +75,7 @@ function withAuthLevel(requiredLevel) {
  * @returns {boolean}
  */
 function isProtectedRoute(req) {
-  return !!req.query.edit || req.method !== 'GET';
+  return !!req.query.edit || !_includes(req.originalUrl, '/_auth') || req.method !== 'GET';
 }
 
 /**
@@ -193,12 +194,13 @@ function checkAuthentication(site) {
  * @param {object} params.storage
  * @returns {object[]}
  */
-function init({ router, providers, site, storage }) {
+function init({ router, providers, site, storage, bus }) {
   if (_isEmpty(providers)) {
     return []; // exit early if no providers are passed in
   }
 
   setDb(storage);
+  setBus(bus);
 
   const currentProviders = getProviders(providers, site);
 
@@ -230,6 +232,7 @@ function init({ router, providers, site, storage }) {
 module.exports = init;
 module.exports.withAuthLevel = withAuthLevel;
 module.exports.authLevels = AUTH_LEVELS;
+module.exports.createUserController = createUser;
 
 // for testing
 module.exports.isProtectedRoute = isProtectedRoute;
