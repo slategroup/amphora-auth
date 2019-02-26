@@ -165,17 +165,17 @@
             <span class="button-text">{{ this.title }}</span>
           </a>
         {{/each}}
+        <form class="login-form" action="/_auth/local" method="post">
+          <div class="form-group">
+            <input id="username" name="username" type="text" placeholder="Username" />
+          </div><br />
+          <div class="form-group">
+            <input id="password" name="password" type="password" placeholder="Password" />
+          </div>
+          <button type="submit">Login</button>
+        </form>
       {{/if}}
     </div>
-    <form class="login-form" action="/_auth/local" method="post">
-      <div class="form-group">
-        <input id="username" name="username" type="text" placeholder="Username" />
-      </div><br />
-      <div class="form-group">
-        <input id="password" name="password" type="password" placeholder="Password" />
-      </div>
-      <button type="submit">Login</button>
-    </form>
   </div>
 </body>
 </html>
