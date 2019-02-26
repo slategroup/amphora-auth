@@ -2,12 +2,7 @@
 
 const passport = require('passport'),
   LocalStrategy = require('passport-local').Strategy,
-  {
-    verify,
-    getAuthUrl,
-    getPathOrBase,
-    generateStrategyName,
-  } = require('../utils');
+  utils = require('../utils');
 
 /**
  * Local authentication strategy
@@ -27,7 +22,7 @@ function createLocalStrategy(site) {
  */
 function verifyLocal() {
   return function (req, username, password, done) {
-    verify({
+    utils.verify({
       username: 'username',
       password: 'password',
       provider: 'local'
@@ -42,14 +37,17 @@ function verifyLocal() {
  * @param {object} provider
  */
 function addAuthRoutes(router, site, provider) {
-  const strategy = generateStrategyName(provider, site);
+  const strategy = utils.generateStrategyName(provider, site);
 
-  router.get(`/_auth/${provider}`, passport.authenticate(strategy, {
-    failureRedirect: `${getAuthUrl(site)}/login`,
+  router.post(`/_auth/${provider}`, passport.authenticate(strategy, {
+    failureRedirect: `${utils.getAuthUrl(site)}/login`,
     failureFlash: true,
-    successReturnToOrRedirect: getPathOrBase(site)
+    successReturnToOrRedirect: utils.getPathOrBase(site)
   }));
 }
 
 module.exports = createLocalStrategy;
 module.exports.addAuthRoutes = addAuthRoutes;
+
+// For testing purposes
+module.exports.verifyLocal = verifyLocal;

@@ -31,29 +31,33 @@ describe(_startCase(filename), function () {
   describe('createUser', function () {
     const fn = lib[this.description];
 
-    it('should throw if there is no data', function (done) {
-      expect(fn({})).toThrow();
-      done();
+    it('should throw if there is no data', function () {
+      const cb = () => fn({});
+
+      expect(cb).toThrow();
     });
 
     it('should encrypt password if provided', function () {
       fakeDb.put.mockResolvedValue(mockData);
       encrypt.hashPassword = jest.fn();
 
-      fn(mockData);
-      expect(encrypt.hashPassword).toHaveBeenCalled();
+      return fn(mockData)
+        .then(() => expect(encrypt.hashPassword).toHaveBeenCalled());
     });
 
-    it.only('should create an user', function () {
+    it('should create an user', function () {
       const expected = Object.assign(mockData, {
         _ref: `/_users/${encode(mockData.username.toLowerCase(), mockData.provider)}`
       });
 
       fakeDb.put.mockResolvedValue(expected);
 
-      let result = fn(mockData);
-
-      expect(result._ref).toBe(expected._ref);
+      return fn(mockData)
+        .then(result => {
+          expect(fakeDb.put).toHaveBeenCalled();
+          expect(result._ref).toBe(expected._ref);
+          expect(fakeBus.publish).toHaveBeenCalled();
+        });
     });
   });
 });

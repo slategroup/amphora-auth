@@ -75,7 +75,7 @@ function withAuthLevel(requiredLevel) {
  * @returns {boolean}
  */
 function isProtectedRoute(req) {
-  return !!req.query.edit || !_includes(req.originalUrl, '/_auth') || req.method !== 'GET';
+  return !!req.query.edit || !_includes(req.originalUrl, '/_auth') && req.method !== 'GET';
 }
 
 /**

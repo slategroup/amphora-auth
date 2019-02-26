@@ -20,12 +20,10 @@ describe(_startCase(filename), function () {
     });
 
     it('should throw an error if no password if passed', function () {
-      bcrypt.hashSync = jest.fn(() => { throw new Error(); });
-      bcrypt.genSaltSync = jest.fn().mockReturnValue('r4nd0ms41th4sh');
+      bcrypt.hashSync = jest.fn().mockImplementation(() => { throw new Error(); });
+      const cb = () => fn();
 
-      fn('');
-
-      expect(bcrypt.hashSync).toThrowError();
+      expect(cb).toThrow();
     });
   });
 
