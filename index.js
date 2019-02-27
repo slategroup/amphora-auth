@@ -233,6 +233,7 @@ module.exports = init;
 module.exports.withAuthLevel = withAuthLevel;
 module.exports.authLevels = AUTH_LEVELS;
 module.exports.createUserController = createUser;
+module.exports.addRoutes = require('./routes/_users');
 
 // for testing
 module.exports.isProtectedRoute = isProtectedRoute;
