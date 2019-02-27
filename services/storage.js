@@ -18,7 +18,7 @@ function get(id) {
  * @returns {Promise<Object>}
  */
 function put(id, data) {
-  return db.put(id, JSON.stringify(data));
+  return db.put(id, data);
 }
 
 module.exports.get = get;

@@ -83,10 +83,8 @@ function verify(properties) {
       // first time logging in! update the user data
       return db.get(uid)
         .then(data => {
-          const parsedData = JSON.parse(data);
-
           // only update the user data if the property doesn't exist (name might have been changed through the kiln UI)
-          return _defaults(parsedData, {
+          return _defaults(data, {
             imageUrl: imageUrl,
             name: name
           });
@@ -102,7 +100,7 @@ function verify(properties) {
             })
             .catch(e => done(e));
         })
-        .catch(() => done(null, false, { message: 'User not found!' })); // no user found
+        .catch((e) => done(null, false, { message: 'User not found!' })); // no user found
     } else {
       // already authenticated. just grab the user data
       return db.get(uid)
@@ -144,12 +142,8 @@ function serializeUser(user, done) {
 
 function deserializeUser(uid, done) {
   return db.get(`/_users/${uid}`)
-    .then(function (user) {
-      done(null, user);
-    })
-    .catch(function (e) {
-      done(e);
-    });
+    .then(user => done(null, user))
+    .catch(e => done(e));
 }
 
 /**
