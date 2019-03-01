@@ -6,6 +6,7 @@ let db = require('../services/storage'),
   bus;
 
 /**
+ * Adds an user into the db and publishes the action to the bus
  * @param {object} data
  * @returns {Promise}
  */
@@ -34,8 +35,25 @@ function createUser(data = {}) {
   });
 }
 
+/**
+ * Removes an user from the db and publishes the action to the bus
+ * @param {string} uri
+ * @returns {Promise<Object>}
+ */
+function deleteUser(uri = '') {
+  return db.get(uri)
+    .then(oldData => {
+      return db.del(uri)
+        .then(() => {
+          bus.publish('deleteUser', { uri });
+          return oldData;
+        });
+    });
+}
+
 // outsiders can act on users
 module.exports.createUser = createUser;
+module.exports.deleteUser = deleteUser;
 
 // For testing
 module.exports.setDb = mock => db = mock;

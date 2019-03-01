@@ -1,6 +1,5 @@
 'use strict';
-const _get = require('lodash/get'),
-  _isEmpty = require('lodash/isEmpty'),
+const _isEmpty = require('lodash/isEmpty'),
   _includes = require('lodash/includes'),
   passport = require('passport'),
   flash = require('express-flash'),
@@ -8,7 +7,6 @@ const _get = require('lodash/get'),
   {
     getAuthUrl,
     getPathOrBase,
-    removePrefix,
     serializeUser,
     deserializeUser,
     getProviders
@@ -16,57 +14,9 @@ const _get = require('lodash/get'),
   sessionStore = require('./session-store'),
   { addAuthRoutes, createStrategy } = require('./strategies'),
   { AUTH_LEVELS } = require('./constants'),
+  { withAuthLevel } = require('./services/auth'),
   { setDb } = require('./services/storage'),
-  { createUser, setBus } = require('./controllers/users');
-
-/**
- * Creates an error message for unathorized requests.
- * @param {Object} res
- */
-function unauthorized(res) {
-  const err = new Error('Unauthorized request'),
-    message = removePrefix(err.message, ':'),
-    code = 401;
-
-  res.status(code).json({ code, message });
-}
-
-/**
- * Check the auth level to see if a user
- * has sufficient permissions
- *
- * @param  {String} userLevel
- * @param  {String} requiredLevel
- * @return {Boolean}
- */
-function checkAuthLevel(userLevel, requiredLevel) {
-  // User has to have an auth level set
-  if (!userLevel) {
-    throw new Error('User does not have an authentication level set');
-  }
-
-  return userLevel === AUTH_LEVELS.ADMIN || userLevel === requiredLevel;
-}
-
-/**
- * Get the user auth level and check it against the
- * required auth level for a route. Send an error
- * if the user doesn't have permissions
- *
- * @param  {String} requiredLevel
- * @return {Function}
- */
-function withAuthLevel(requiredLevel) {
-  return function (req, res, next) {
-    if (checkAuthLevel(_get(req, 'user.auth', ''), requiredLevel)) {
-      // If the user exists and meets the level requirement, let the request proceed
-      next();
-    } else {
-      // None of the above, we need to error
-      unauthorized(res);
-    }
-  };
-}
+  { setBus } = require('./controllers/users');
 
 /**
  * determine if a route is protected
@@ -232,7 +182,6 @@ function init({ router, providers, site, storage, bus }) {
 module.exports = init;
 module.exports.withAuthLevel = withAuthLevel;
 module.exports.authLevels = AUTH_LEVELS;
-module.exports.createUserController = createUser;
 module.exports.addRoutes = require('./routes/_users');
 
 // for testing
@@ -240,6 +189,5 @@ module.exports.isProtectedRoute = isProtectedRoute;
 module.exports.isAuthenticated = isAuthenticated;
 module.exports.protectRoutes = protectRoutes;
 module.exports.checkAuthentication = checkAuthentication;
-module.exports.checkAuthLevel = checkAuthLevel;
 module.exports.onLogin = onLogin;
 module.exports.onLogout = onLogout;

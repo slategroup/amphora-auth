@@ -100,7 +100,7 @@ function verify(properties) {
             })
             .catch(e => done(e));
         })
-        .catch((e) => done(null, false, { message: 'User not found!' })); // no user found
+        .catch(() => done(null, false, { message: 'User not found!' })); // no user found
     } else {
       // already authenticated. just grab the user data
       return db.get(uid)
@@ -183,6 +183,51 @@ function compileTemplate(filename) {
   return handlebars.compile(fs.readFileSync(path.resolve(__dirname, '.', 'views', filename), { encoding: 'utf-8' }));
 }
 
+/**
+ * Returns a normalized URI
+ * @param {object} req
+ * @returns {string}
+ */
+function getUri(req) {
+  return normalizePath(req.hostname + req.baseUrl + req.path);
+}
+
+/**
+ * Normalizes an URI
+ * @param {string} path
+ * @returns {string}
+ */
+function normalizePath(path) {
+  return removeExtension(removeQueryString(path));
+}
+
+/**
+ * Removes extension from route / path.
+ * @param {string} path
+ * @returns {string}
+ */
+function removeExtension(path) {
+  let endSlash = path.lastIndexOf('/'),
+    leadingDot = endSlash > -1
+      ? path.indexOf('.', endSlash)
+      : path.indexOf('.');
+
+  if (leadingDot > -1) {
+    path = path.substr(0, leadingDot);
+  }
+
+  return path;
+}
+
+/**
+ * Removes querystring from route / path.
+ * @param  {string} path
+ * @return {string}
+ */
+function removeQueryString(path) {
+  return path.split('?')[0];
+}
+
 module.exports.encode = encode;
 module.exports.getPathOrBase = getPathOrBase;
 module.exports.getAuthUrl = getAuthUrl;
@@ -194,3 +239,4 @@ module.exports.deserializeUser = deserializeUser;
 module.exports.getProviders = getProviders;
 module.exports.generateStrategyName = generateStrategyName;
 module.exports.compileTemplate = compileTemplate;
+module.exports.getUri = getUri;
