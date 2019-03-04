@@ -41,7 +41,7 @@ describe(_startCase(filename), function () {
       fakeDb.put.mockResolvedValue(data);
 
       return fn('foo', data).then(result => {
-        expect(fakeDb.put).toHaveBeenCalledWith('foo', JSON.stringify(data));
+        expect(fakeDb.put).toHaveBeenCalledWith('foo', data);
         expect(result.provider).toBe('local');
       });
     });

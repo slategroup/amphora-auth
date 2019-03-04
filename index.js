@@ -136,6 +136,17 @@ function checkAuthentication(site) {
 }
 
 /**
+ * add current user to locals
+ * @param {req} req
+ * @param {res} res
+ * @param {function} next
+ */
+function addUser(req, res, next) {
+  res.locals.user = req.user;
+  next();
+}
+
+/**
  * Initialize authentication
  * @param {object} params
  * @param {express.Router} params.router
@@ -175,6 +186,7 @@ function init({ router, providers, site, storage, bus }) {
   // handle de-authentication errors. This occurs when a user is logged in
   // and someone removes them as a user. We need to catch the error
   router.use(checkAuthentication(site));
+  router.use(addUser);
 
   return currentProviders; // for testing/verification
 }
