@@ -7,12 +7,12 @@ const _assign = require('lodash/assign'),
   _omit = require('lodash/omit'),
   bluebird = require('bluebird'),
   map = require('through2-map'),
-  log = require('./logger').setup({
-    file: __filename
-  }),
-  db = require('./storage'),
   { removePrefix, getUri } = require('../utils'),
   omitProperties = ['password'];
+let db = require('./storage'),
+  log = require('./logger').setup({
+    file: __filename
+  });
 
 /**
  * Reusable code to return JSON data, both for good results AND errors.
@@ -173,7 +173,7 @@ function serverError(err, res) {
 }
 
 /**
- *
+ * Sets Vary header
  * @param {{varyBy: [string]}} options
  * @returns {function}
  */
@@ -274,7 +274,7 @@ function listUsers(options) {
  * @param {Function} next
  */
 function denyReferenceAtRoot(req, res, next) {
-  const body = req.body;
+  const { body } = req;
 
   if (_has(body, '_ref')) {
     sendDefaultResponseForCode(400, 'Reference (_ref) at root of object is not acceptable', res);
@@ -332,3 +332,10 @@ module.exports.acceptJSONOnly = acceptJSONOnly;
 module.exports.denyTrailingSlashOnId = denyTrailingSlashOnId;
 module.exports.getRouteFromDB = getRouteFromDB;
 module.exports.notAcceptable = notAcceptable;
+
+// For testing purposes
+module.exports.setLog = mock => log = mock;
+module.exports.setDb = mock => db = mock;
+module.exports.handleError = handleError;
+module.exports.clientError = clientError;
+module.exports.serverError = serverError;

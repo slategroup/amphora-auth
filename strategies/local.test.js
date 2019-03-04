@@ -39,7 +39,7 @@ describe(_startCase(filename), function () {
     const fn = lib[this.description],
       paths = [],
       router = {
-        get: function (path) {
+        post: function (path) {
           // testing if the paths are added,
           // we're checking the paths array after each test
           paths.push(path);
