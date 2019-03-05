@@ -5,7 +5,7 @@ const _startCase = require('lodash/startCase'),
   filename = __filename.split('/').pop().split('.').shift(),
   lib = require(`./${filename}`),
   createMockRes = require('../test/fixtures/mocks/res'),
-  db = require('../services/storage');
+  storage = require('../test/fixtures/mocks/storage');
 
 describe(_startCase(filename), function () {
   let fakeLog,
@@ -14,10 +14,7 @@ describe(_startCase(filename), function () {
 
   beforeEach(function () {
     fakeLog = jest.fn();
-    fakeDb = {
-      get: jest.fn(),
-      list: jest.fn()
-    };
+    fakeDb = storage();
     mockRes = createMockRes();
     mockRes.status = jest.fn().mockReturnThis();
 
@@ -272,8 +269,8 @@ describe(_startCase(filename), function () {
     });
   });
 
-  describe('listUsers', function () {
-    const fn = lib[this.title],
+  describe.only('listUsers', function () {
+    const fn = lib[this.description],
       expected = [
         '/_users/a',
         '/_users/aa',
@@ -285,17 +282,21 @@ describe(_startCase(filename), function () {
       ];
 
     beforeEach(function () {
-      return db.clearMem().then(function () {
+      return fakeDb.clearMem().then(function () {
         return bluebird.join(
-          db.writeToInMem('/_users/a', 'b'),
-          db.writeToInMem('/_users/aa', 'b'),
-          db.writeToInMem('/_users/aaa', 'b'),
-          db.writeToInMem('/_users/c', 'd'),
-          db.writeToInMem('/_users/cc', 'd'),
-          db.writeToInMem('/_users/ccc', 'd'),
-          db.writeToInMem('/_users/e', 'f')
+          fakeDb.writeToInMem('/_users/a', 'b'),
+          fakeDb.writeToInMem('/_users/aa', 'b'),
+          fakeDb.writeToInMem('/_users/aaa', 'b'),
+          fakeDb.writeToInMem('/_users/c', 'd'),
+          fakeDb.writeToInMem('/_users/cc', 'd'),
+          fakeDb.writeToInMem('/_users/ccc', 'd'),
+          fakeDb.writeToInMem('/_users/e', 'f')
         );
       });
+    });
+
+    afterEach(function () {
+      fakeDb.clearMem();
     });
 
     it('lists users under a domain', function (done) {
