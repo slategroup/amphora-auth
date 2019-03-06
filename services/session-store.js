@@ -2,7 +2,7 @@
 
 const session = require('express-session'),
   RedisStore = require('connect-redis')(session),
-  { SECRET } = require('./constants'),
+  { SECRET } = require('../constants'),
   { REDIS_DB, REDIS_SESSION_HOST } = process.env,
   sessionPrefix = REDIS_DB ? `${REDIS_DB}-clay-session:` : 'clay-session:';
 

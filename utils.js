@@ -10,7 +10,7 @@ const _get = require('lodash/get'),
   fs = require('fs'),
   path = require('path'),
   handlebars = require('handlebars'),
-  references = require('./references'),
+  references = require('./services/references'),
   { isValidPassword } = require('./services/encrypt'),
   db = require('./services/storage');
 
