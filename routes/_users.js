@@ -1,6 +1,6 @@
 'use strict';
 
-const _ = require('lodash'),
+const _bindAll = require('lodash/bindAll'),
   responses = require('../services/responses'),
   { AUTH_LEVELS } = require('../constants'),
   controller = require('../controllers/users'),
@@ -13,7 +13,7 @@ const _ = require('lodash'),
  *
  * @namespace
  */
-let route = _.bindAll({
+let route = _bindAll({
   /**
    * @param {object} req
    * @param {object} res
