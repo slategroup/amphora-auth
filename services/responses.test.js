@@ -302,6 +302,7 @@ describe(_startCase(filename), function () {
     it('lists users under a domain', function (done) {
       const req = {
         hostname: 'base.com',
+        baseUrl: '',
         path: '/_users/'
       };
 
@@ -315,6 +316,7 @@ describe(_startCase(filename), function () {
     it('lists users under a domain with a path', function (done) {
       const req = {
         hostname: 'base.com',
+        baseUrl: '',
         path: '/some/path/_users/'
       };
 
