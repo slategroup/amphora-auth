@@ -1,5 +1,5 @@
 {
-  "name": "amphora-passport",
+  "name": "amphora-authentication",
   "version": "0.0.1",
   "description": "An adapter for Amphora & Passport.js",
   "main": "index.js",
