@@ -269,7 +269,7 @@ describe(_startCase(filename), function () {
     });
   });
 
-  describe.only('listUsers', function () {
+  describe('listUsers', function () {
     const fn = lib[this.description],
       expected = [
         '/_users/a',

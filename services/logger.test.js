@@ -17,15 +17,10 @@ describe(_startCase(filename), function () {
   describe('init', function () {
     const fn = lib[this.description];
 
-    it('should initialize if no log instance is set', function () {
-      fn();
-      expect(clayLog.init).toBeCalled();
-    });
-
     it('returns if a log instance is set', function () {
       lib.setLogger(fakeLog);
       fn();
-      expect(clayLog.init).toBeCalled();
+      expect(clayLog.init).not.toBeCalled();
     });
   });
 });
