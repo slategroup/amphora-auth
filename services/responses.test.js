@@ -4,12 +4,8 @@ const _startCase = require('lodash/startCase'),
   bluebird = require('bluebird'),
   filename = __filename.split('/').pop().split('.').shift(),
   lib = require(`./${filename}`),
-<<<<<<< HEAD
-  createMockRes = require('../test/fixtures/mocks/res');
-=======
   createMockRes = require('../test/fixtures/mocks/res'),
   storage = require('../test/fixtures/mocks/storage');
->>>>>>> b984b4d967604058de9c2e182abd84a61ac895a6
 
 describe(_startCase(filename), function () {
   let fakeLog,
@@ -18,14 +14,7 @@ describe(_startCase(filename), function () {
 
   beforeEach(function () {
     fakeLog = jest.fn();
-<<<<<<< HEAD
-    fakeDb = {
-      get: jest.fn(),
-      list: jest.fn()
-    };
-=======
     fakeDb = storage();
->>>>>>> b984b4d967604058de9c2e182abd84a61ac895a6
     mockRes = createMockRes();
     mockRes.status = jest.fn().mockReturnThis();
 
@@ -281,11 +270,7 @@ describe(_startCase(filename), function () {
   });
 
   describe('listUsers', function () {
-<<<<<<< HEAD
-    const fn = lib[this.title],
-=======
     const fn = lib[this.description],
->>>>>>> b984b4d967604058de9c2e182abd84a61ac895a6
       expected = [
         '/_users/a',
         '/_users/aa',
@@ -297,17 +282,6 @@ describe(_startCase(filename), function () {
       ];
 
     beforeEach(function () {
-<<<<<<< HEAD
-      return db.clearMem().then(function () {
-        return bluebird.join(
-          db.writeToInMem('/_users/a', 'b'),
-          db.writeToInMem('/_users/aa', 'b'),
-          db.writeToInMem('/_users/aaa', 'b'),
-          db.writeToInMem('/_users/c', 'd'),
-          db.writeToInMem('/_users/cc', 'd'),
-          db.writeToInMem('/_users/ccc', 'd'),
-          db.writeToInMem('/_users/e', 'f')
-=======
       return fakeDb.clearMem().then(function () {
         return bluebird.join(
           fakeDb.writeToInMem('/_users/a', 'b'),
@@ -317,16 +291,10 @@ describe(_startCase(filename), function () {
           fakeDb.writeToInMem('/_users/cc', 'd'),
           fakeDb.writeToInMem('/_users/ccc', 'd'),
           fakeDb.writeToInMem('/_users/e', 'f')
->>>>>>> b984b4d967604058de9c2e182abd84a61ac895a6
         );
       });
     });
 
-<<<<<<< HEAD
-    it('lists users under a domain', function (done) {
-      const req = {
-        hostname: 'base.com',
-=======
     afterEach(function () {
       fakeDb.clearMem();
     });
@@ -335,7 +303,6 @@ describe(_startCase(filename), function () {
       const req = {
         hostname: 'base.com',
         baseUrl: '',
->>>>>>> b984b4d967604058de9c2e182abd84a61ac895a6
         path: '/_users/'
       };
 
@@ -349,10 +316,7 @@ describe(_startCase(filename), function () {
     it('lists users under a domain with a path', function (done) {
       const req = {
         hostname: 'base.com',
-<<<<<<< HEAD
-=======
         baseUrl: '',
->>>>>>> b984b4d967604058de9c2e182abd84a61ac895a6
         path: '/some/path/_users/'
       };
 

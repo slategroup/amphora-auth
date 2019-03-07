@@ -36,7 +36,6 @@
         justify-content: center;
         margin: 0 auto;
         max-width: 600px;
-        min-height: 60vh;
       }
 
       .clay-logo {
@@ -59,10 +58,6 @@
         margin-bottom: 0;
       }
 
-      .details {
-        margin-bottom: 25px;
-      }
-
       .separator {
         color: #666;
         margin: 25px 0;
@@ -76,6 +71,7 @@
         flex-flow: row wrap;
         font-size: 16px;
         justify-content: center;
+        margin-top: 25px;
         padding: 50px;
         width: 600px;
       }
@@ -187,14 +183,14 @@
           <span class="button-text">Log out</span>
         </a>
       {{else}}
-        <div class="buttons">
           {{#each currentProviders}}
+        <div class="buttons">
             <a class="button {{this.name}}" href="{{ this.url }}" title="{{ this.title }}">
               <div class="button-icon">{{> ( icon ) }}</div>
               <span class="button-text">{{ this.title }}</span>
             </a>
-          {{/each}}
         </div>
+          {{/each}}
         {{#if currentProviders}}<p class="separator">or</p>{{/if}}
         <form class="login-form" action="/_auth/local" method="post">
           <input id="username" name="username" type="text" placeholder="Username" />
