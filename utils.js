@@ -92,7 +92,7 @@ function verify(properties) {
         .then(data => {
           return db.put(uid, JSON.stringify(data))
             .then(() => {
-              if (!isValidPassword(data, password)) {
+              if (password && !isValidPassword(data, password)) {
                 return done(null, false, { message: 'Invalid Password' });
               }
 
@@ -105,7 +105,7 @@ function verify(properties) {
       // already authenticated. just grab the user data
       return db.get(uid)
         .then(data => {
-          if (!isValidPassword(data, password)) {
+          if (password && !isValidPassword(data, password)) {
             return done(null, false, { message: 'Invalid Password' });
           }
 
