@@ -183,14 +183,14 @@
           <span class="button-text">Log out</span>
         </a>
       {{else}}
-          {{#each currentProviders}}
+        {{#each currentProviders}}
         <div class="buttons">
             <a class="button {{this.name}}" href="{{ this.url }}" title="{{ this.title }}">
               <div class="button-icon">{{> ( icon ) }}</div>
               <span class="button-text">{{ this.title }}</span>
             </a>
         </div>
-          {{/each}}
+        {{/each}}
         {{#if currentProviders}}<p class="separator">or</p>{{/if}}
         <form class="login-form" action="/_auth/local" method="post">
           <input id="username" name="username" type="text" placeholder="Username" />
