@@ -174,7 +174,7 @@
       <p class="details">You are currently logged in to Clay</p>
     {{else}}
       <h1 class="header">Log in to Clay</h1>
-      {{#if currentProviders}}<p class="details">Please choose the provider attached to your account</p>{{/if}}
+      {{#if currentProviders.length}}<p class="details">Please choose the provider attached to your account</p>{{/if}}
     {{/with}}
     <div class="login-options">
       {{#if user}}
