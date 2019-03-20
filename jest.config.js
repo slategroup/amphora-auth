@@ -10,6 +10,8 @@ module.exports = {
     '!*.config.js',
     '!test/fixtures/**',
     '!test/utils/**',
+    '!routes/**',
+    '!strategies/index.js',
     '**/*.js'
   ],
   coverageDirectory: 'coverage'

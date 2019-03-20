@@ -1,7 +1,8 @@
 'use strict';
 
-const session = require('express-session'),
-  RedisStore = require('connect-redis')(session),
+let session = require('express-session');
+
+const RedisStore = require('connect-redis')(session),
   { SECRET } = require('../constants'),
   { REDIS_DB, REDIS_SESSION_HOST } = process.env,
   sessionPrefix = REDIS_DB ? `${REDIS_DB}-clay-session:` : 'clay-session:';
@@ -34,3 +35,6 @@ function createSessionStore() {
 }
 
 module.exports = createSessionStore;
+
+// For testing purposes
+module.exports.setSession = mock => session = mock;

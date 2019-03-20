@@ -25,7 +25,7 @@ describe(_startCase(filename), function () {
     it('returns if a log instance is set', function () {
       lib.setLogger(fakeLog);
       fn();
-      expect(clayLog.init).toBeCalled();
+      expect(clayLog.init).not.toBeCalled();
     });
   });
 });
