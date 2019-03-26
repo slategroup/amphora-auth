@@ -1,6 +1,7 @@
 'use strict';
 
-const _ = require('lodash'),
+const _constant = require('lodash/constant'),
+  _noop = require('lodash/noop'),
   Transform = require('stream').Transform;
 
 module.exports = function (options) {
@@ -19,17 +20,17 @@ module.exports = function (options) {
   };
 
   // mock these methods
-  res.status = _.constant(res);
-  res.send = _.constant(res);
-  res.redirect = _.noop;
+  res.status = _constant(res);
+  res.send = _constant(res);
+  res.redirect = _noop;
   res.json = function (json) {
     res.type('json');
     res.send(json);
     return res;
   };
-  res.type = _.constant(res);
-  res.set = _.constant(res);
-  res.pipe = _.constant(res);
+  res.type = _constant(res);
+  res.set = _constant(res);
+  res.pipe = _constant(res);
   res.locals = {};
 
   // send status is a shortcut of express, pretend they're sending for testing ease

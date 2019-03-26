@@ -6,7 +6,6 @@ const passport = require('passport'),
 
 /**
  * Local authentication strategy
- *
  * @param {object} site
  */
 function createLocalStrategy(site) {

@@ -184,12 +184,12 @@
         </a>
       {{else}}
         {{#each currentProviders}}
-        <div class="buttons">
-            <a class="button {{this.name}}" href="{{ this.url }}" title="{{ this.title }}">
-              <div class="button-icon">{{> ( icon ) }}</div>
-              <span class="button-text">{{ this.title }}</span>
-            </a>
-        </div>
+          <div class="buttons">
+              <a class="button {{this.name}}" href="{{ this.url }}" title="{{ this.title }}">
+                <div class="button-icon">{{> ( icon ) }}</div>
+                <span class="button-text">{{ this.title }}</span>
+              </a>
+          </div>
         {{/each}}
         {{#if currentProviders.length}}<p class="separator">or</p>{{/if}}
         <form class="login-form" action="{{path}}/_auth/local" method="post">

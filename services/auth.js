@@ -55,5 +55,6 @@ function withAuthLevel(requiredLevel) {
 
 module.exports.withAuthLevel = withAuthLevel;
 
+// For testing purposes
 module.exports.unauthorized = unauthorized;
 module.exports.checkAuthLevel = checkAuthLevel;

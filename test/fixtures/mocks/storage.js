@@ -77,7 +77,6 @@ class Storage {
     return deferred.promise;
   }
 
-
   /**
    * Gets a stream of data from the db
    * @param {Object} options

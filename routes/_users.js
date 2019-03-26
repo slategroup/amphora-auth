@@ -4,42 +4,38 @@ const _bindAll = require('lodash/bindAll'),
   responses = require('../services/responses'),
   { AUTH_LEVELS } = require('../constants'),
   controller = require('../controllers/users'),
-  { withAuthLevel } = require('../services/auth');
-
-/**
- * All routes go here.
- *
- * They will all have the form (req, res), but never with next()
- *
- * @namespace
- */
-let route = _bindAll({
-  /**
-   * @param {object} req
-   * @param {object} res
-   */
-  createUser(req, res) {
-    responses.expectJSON(() => {
-      return controller.createUser(req.body);
-    }, res);
-  },
+  { withAuthLevel } = require('../services/auth'),
 
   /**
-   * Remove the user and tell the bus
+   * All routes go here.
    *
-   * @param {Object} req
-   * @param {Object} res
-   * @returns {Promise}
+   * They will all have the form (req, res), but never with next()
+   *
+   * @namespace
    */
-  deleteUser(req, res) {
-    return responses.expectJSON(() => {
-      return controller.deleteUser(req.uri);
-    }, res);
-  }
-}, [
-  'createUser',
-  'deleteUser'
-]);
+  route = _bindAll({
+    /**
+     * Add an user and tell the bus
+     * @param {object} req
+     * @param {object} res
+     */
+    createUser(req, res) {
+      responses.expectJSON(() => controller.createUser(req.body), res);
+    },
+
+    /**
+     * Remove the user and tell the bus
+     * @param {Object} req
+     * @param {Object} res
+     * @returns {Promise}
+     */
+    deleteUser(req, res) {
+      return responses.expectJSON(() => controller.deleteUser(req.uri), res);
+    }
+  }, [
+    'createUser',
+    'deleteUser'
+  ]);
 
 /**
  * We want to trim the everything before /users/ out of

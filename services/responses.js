@@ -8,7 +8,8 @@ const _assign = require('lodash/assign'),
   bluebird = require('bluebird'),
   map = require('through2-map'),
   { removePrefix, getUri } = require('../utils'),
-  omitProperties = ['password'];
+  omitProperties = ['password'],
+  STATUS_CODE_ERROR = 400;
 let db = require('./storage'),
   log = require('./logger').setup({
     file: __filename
@@ -141,7 +142,6 @@ function notFound(err, res) {
 
 /**
  * All client errors should look like this.
-
  * @param {Error} err
  * @param {object} res
  */
@@ -150,7 +150,7 @@ function clientError(err, res) {
 
   // They know it's a 400 already, we don't need to repeat the fact that its an error.
   const message = removePrefix(err.message, ':'),
-    code = 400;
+    code = STATUS_CODE_ERROR;
 
   sendDefaultResponseForCode(code, message, res);
 }
@@ -277,7 +277,7 @@ function denyReferenceAtRoot(req, res, next) {
   const { body } = req;
 
   if (_has(body, '_ref')) {
-    sendDefaultResponseForCode(400, 'Reference (_ref) at root of object is not acceptable', res);
+    sendDefaultResponseForCode(STATUS_CODE_ERROR, 'Reference (_ref) at root of object is not acceptable', res);
   } else {
     next();
   }
@@ -305,7 +305,7 @@ function acceptJSONOnly(req, res, next) {
  */
 function denyTrailingSlashOnId(req, res, next) {
   if (_last(req.path) === '/') {
-    sendDefaultResponseForCode(400, 'Trailing slash on RESTful id in URL is not acceptable', res);
+    sendDefaultResponseForCode(STATUS_CODE_ERROR, 'Trailing slash on RESTful id in URL is not acceptable', res);
   } else {
     next();
   }

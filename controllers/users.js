@@ -1,8 +1,8 @@
 'use strict';
 
-const { encode } = require('../utils');
+const { encode } = require('../utils'),
+  encrypt = require('../services/encrypt');
 let db = require('../services/storage'),
-  encrypt = require('../services/encrypt'),
   bus;
 
 /**
@@ -11,8 +11,8 @@ let db = require('../services/storage'),
  * @returns {Promise}
  */
 function createUser(data = {}) {
-  let { username, password, provider, auth } = data,
-    uri = '/_users/';
+  const { username, password, provider, auth } = data;
+  let uri = '/_users/';
 
   // Validate payload
   if (!username || !provider || !auth) {
