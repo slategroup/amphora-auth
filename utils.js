@@ -1,7 +1,6 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  _last = require('lodash/last'),
   _defaults = require('lodash/defaults'),
   _map = require('lodash/map'),
   _capitalize = require('lodash/capitalize'),
@@ -10,8 +9,9 @@ const _get = require('lodash/get'),
   fs = require('fs'),
   path = require('path'),
   handlebars = require('handlebars'),
-  references = require('./references');
-let db; // Storage module passed from Amphora. Assigned value at initialization
+  references = require('./services/references'),
+  { isValidPassword } = require('./services/encrypt'),
+  db = require('./services/storage');
 
 /**
  * encode username and provider to base64
@@ -26,15 +26,24 @@ function encode(username, provider) {
 }
 
 /**
+ * Gets the base site path
+ * @param {Object} site
+ * @returns {string}
+ */
+function getBasePath(site) {
+  return references.uriToUrl(site.prefix, site.protocol, site.port);
+}
+
+/**
  * get the proper /auth url for a site
  * note: needs to add/not add initial slash, depending on the site path
  * @param {object} site
  * @returns {string}
  */
 function getAuthUrl(site) {
-  const base = references.uriToUrl(site.prefix, site.protocol, site.port);
+  const base = getBasePath(site);
 
-  return _last(base) === '/' ? `${base}_auth` : `${base}/_auth`;
+  return `${base}_auth`;
 }
 
 /**
@@ -44,7 +53,7 @@ function getAuthUrl(site) {
  * @returns {string}
  */
 function getPathOrBase(site) {
-  return site.path || '/';
+  return site.path || getBasePath(site) || '/';
 }
 
 /**
@@ -61,14 +70,14 @@ function getCallbackUrl(site, provider) {
  * create/authenticate against a clay user
  *
  * @param {object} properties to grab from provider and provider name itself
- * @param {object} site
  * @returns {Promise}
  */
 function verify(properties) {
   return function (req, token, tokenSecret, profile, done) { // eslint-disable-line
     const username = _get(profile, properties.username),
-      imageUrl = _get(profile, properties.imageUrl),
-      name = _get(profile, properties.name),
+      imageUrl = _get(profile, properties.imageUrl, ''),
+      name = _get(profile, properties.name, ''),
+      password = _get(profile, properties.password, ''),
       provider = properties.provider;
 
     if (!username) {
@@ -76,30 +85,40 @@ function verify(properties) {
     }
 
     // get UID
-    let uid = `/_users/${encode(`${username.toLowerCase()}`, provider)}`;
+    let uid = `/_users/${encode(username.toLowerCase(), provider)}`;
 
     if (!req.user) {
       // first time logging in! update the user data
       return db.get(uid)
-        .then(function (data) {
+        .then(data => {
           // only update the user data if the property doesn't exist (name might have been changed through the kiln UI)
           return _defaults(data, {
             imageUrl: imageUrl,
             name: name
           });
         })
-        .then(function (data) {
+        .then(data => {
           return db.put(uid, JSON.stringify(data))
-            .then(() => done(null, data))
+            .then(() => {
+              if (password && !isValidPassword(data, password)) {
+                return done(null, false, { message: 'Invalid Password' });
+              }
+
+              return done(null, data);
+            })
             .catch(e => done(e));
         })
-        .catch(() => {
-          done(null, false, { message: 'User not found!' });
-        }); // no user found
+        .catch(() => done(null, false, { message: 'User not found!' })); // no user found
     } else {
       // already authenticated. just grab the user data
       return db.get(uid)
-        .then((data) => done(null, data))
+        .then(data => {
+          if (password && !isValidPassword(data, password)) {
+            return done(null, false, { message: 'Invalid Password' });
+          }
+
+          return done(null, data);
+        })
         .catch(() => done(null, false, { message: 'User not found!' })); // no user found
     }
   };
@@ -131,12 +150,8 @@ function serializeUser(user, done) {
 
 function deserializeUser(uid, done) {
   return db.get(`/_users/${uid}`)
-    .then(function (user) {
-      done(null, user);
-    })
-    .catch(function (e) {
-      done(e);
-    });
+    .then(user => done(null, user))
+    .catch(e => done(e));
 }
 
 /**
@@ -146,12 +161,15 @@ function deserializeUser(uid, done) {
  * @returns {Object[]}
  */
 function getProviders(providers, site) {
-  return _map(_reject(providers, provider => provider === 'apikey'), provider => ({
-    name: provider,
-    url: `${getAuthUrl(site)}/${provider}`,
-    title: `Log in with ${_capitalize(provider)}`,
-    icon: _constant(provider) // a function that returns the provider
-  }));
+  return _map(
+    _reject(providers, provider => provider === 'apikey' || provider === 'local'),
+    provider => ({
+      name: provider,
+      url: `${getAuthUrl(site)}/${provider}`,
+      title: `Log in with ${_capitalize(provider)}`,
+      icon: _constant(provider) // a function that returns the provider
+    })
+  );
 }
 
 /**
@@ -173,8 +191,52 @@ function compileTemplate(filename) {
   return handlebars.compile(fs.readFileSync(path.resolve(__dirname, '.', 'views', filename), { encoding: 'utf-8' }));
 }
 
+/**
+ * Returns a normalized URI
+ * @param {object} req
+ * @returns {string}
+ */
+function getUri(req) {
+  return normalizePath(req.hostname + req.baseUrl + req.path);
+}
+
+/**
+ * Normalizes an URI
+ * @param {string} path
+ * @returns {string}
+ */
+function normalizePath(path) {
+  return removeExtension(removeQueryString(path));
+}
+
+/**
+ * Removes extension from route / path.
+ * @param {string} path
+ * @returns {string}
+ */
+function removeExtension(path) {
+  let endSlash = path.lastIndexOf('/'),
+    leadingDot = endSlash > -1
+      ? path.indexOf('.', endSlash)
+      : path.indexOf('.');
+
+  if (leadingDot > -1) {
+    path = path.substr(0, leadingDot);
+  }
+
+  return path;
+}
+
+/**
+ * Removes querystring from route / path.
+ * @param  {string} path
+ * @return {string}
+ */
+function removeQueryString(path) {
+  return path.split('?')[0];
+}
+
 module.exports.encode = encode;
-module.exports.setDb = storage => db = storage;
 module.exports.getPathOrBase = getPathOrBase;
 module.exports.getAuthUrl = getAuthUrl;
 module.exports.getCallbackUrl = getCallbackUrl;
@@ -185,3 +247,4 @@ module.exports.deserializeUser = deserializeUser;
 module.exports.getProviders = getProviders;
 module.exports.generateStrategyName = generateStrategyName;
 module.exports.compileTemplate = compileTemplate;
+module.exports.getUri = getUri;

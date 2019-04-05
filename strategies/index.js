@@ -5,7 +5,8 @@ const STRATEGIES = {
   google: require('./google'),
   ldap: require('./ldap'),
   twitter: require('./twitter'),
-  slack: require('./slack')
+  slack: require('./slack'),
+  local: require('./local')
 };
 
 /**

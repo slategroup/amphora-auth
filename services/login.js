@@ -2,7 +2,7 @@
 
 const _each = require('lodash/each'),
   handlebars = require('handlebars'),
-  utils = require('./utils');
+  utils = require('../utils');
 
 /**
  * Creates the login page template.

@@ -148,43 +148,4 @@ describe(_startCase(filename), function () {
       expect(res.redirect).toBeCalledWith('http://domain.com/_auth/login');
     });
   });
-
-  describe('withAuthLevel', function () {
-    const fn = lib[this.description],
-      reqObj = {
-        user: {
-          auth: 'write'
-        }
-      },
-      mockRes = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
-      };
-
-    lib.unauthorized = jest.fn();
-
-    it('throws an error if userLevel is undefined', function () {
-      const next = jest.fn(),
-        cb = () => fn('admin')({}, {}, next);
-
-      expect(cb).toThrow();
-    });
-
-    it('sends unauthorized response if user does not have proper permissions', function () {
-      const next = jest.fn();
-
-      fn('admin')(reqObj, mockRes, next);
-      expect(next).not.toBeCalled();
-      expect(mockRes.status).toBeCalled();
-      expect(mockRes.json).toBeCalled();
-    });
-
-    it('calls next if the user has the appropriate level', function () {
-      const next = jest.fn();
-
-      fn('write')(reqObj, mockRes, next);
-      expect(next).toBeCalled();
-      expect(lib.unauthorized).not.toBeCalled();
-    });
-  });
 });

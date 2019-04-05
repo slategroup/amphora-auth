@@ -11,7 +11,7 @@ const passport = require('passport'),
   } = require('../utils');
 
 /**
- * Google authenticatio strategy
+ * Google authentication strategy
  *
  * @param {object} site
  */
@@ -28,7 +28,7 @@ function createGoogleStrategy(site) {
     imageUrl: 'photos[0].value',
     name: 'displayName',
     provider: 'google'
-  }, site)));
+  })));
 }
 
 /**

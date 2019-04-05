@@ -11,7 +11,7 @@ const passport = require('passport'),
  * @param {object} site
  * @returns {function}
  */
-function verifyLdap(site) {
+function verifyLdap() {
   return function (req, user, done) {
     // the callback for LDAP is different than oauth, so we need to
     // pass different options to verify()
@@ -20,7 +20,7 @@ function verifyLdap(site) {
       imageUrl: '', // ldap generally has no images
       name: 'displayName',
       provider: 'ldap'
-    }, site)(req, null, null, user, done); // eslint-disable-line
+    })(req, null, null, user, done); // eslint-disable-line
   };
 }
 
@@ -39,7 +39,7 @@ function createLDAPStrategy(site) {
     },
     passReqToCallback: true,
     credentialsLookup: basicAuth,
-  }, verifyLdap(site)));
+  }, verifyLdap()));
 }
 
 /**
