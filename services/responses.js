@@ -45,7 +45,7 @@ function handleError(res) {
       err.message.indexOf('ENOENT') !== -1 ||
       err.message.indexOf('not found') !== -1) {
       notFound(err, res);
-      // if the word "client" is ever in a message, it should be for the client.  We enforce that here.
+      // if the word "client" is ever in a message, it should be for the client. We enforce that here.
     } else if (err.message.indexOf('Client') !== -1) {
       clientError(err, res);
     } else {
@@ -120,7 +120,7 @@ function sendJSONErrorCode(code, message, res, extras) {
 function sendTextErrorCode(code, message, res) {
   return function () {
     res.type('text');
-    res.send(code + ' ' + message);
+    res.send(`${code} ${message}`);
   };
 }
 
@@ -130,11 +130,7 @@ function sendTextErrorCode(code, message, res) {
  * @param {object} res
  */
 function notFound(err, res) {
-  if (!(err instanceof Error) && err) {
-    res = err;
-  }
-
-  const message = 'Not Found',
+  const message = err.message || 'Not Found',
     code = 404;
 
   // hide error from user of api.
@@ -184,7 +180,7 @@ function varyWithoutExtension(options) {
   return function (req, res, next) {
     // a slash, followed by a dot, followed by more characters, means it is an extension
     // note that this is explicitly not talking about a uri; Law of Demeter
-    if (!(req.baseUrl + req.url).match(/.*\/.*\.(.*)/)) {
+    if (!(req.baseUrl + req.path).match(/.*\/.*\.(.*)/)) {
       res.set('Vary', varyBy);
     }
 
@@ -209,7 +205,7 @@ function methodNotAllowed(options) {
       next();
     } else {
       code = 405;
-      message = 'Method ' + method + ' not allowed';
+      message = `Method ${method} not allowed`;
       res.set('Allow', allowed.join(', ').toUpperCase());
       sendDefaultResponseForCode(code, message, res, options);
     }
@@ -233,7 +229,7 @@ function notAcceptable(options) {
       next();
     } else {
       code = 406;
-      message = req.get('Accept') + ' not acceptable';
+      message = `${req.get('Accept')} not acceptable`;
       res.set('Accept', acceptableTypes.join(', ').toLowerCase());
       sendDefaultResponseForCode(code, message, res, options);
     }
@@ -296,7 +292,7 @@ function acceptJSONOnly(req, res, next) {
   if (req.accepts('json')) {
     next();
   } else {
-    notAcceptable({accept: ['application/json']})(req, res);
+    notAcceptable({accept: ['application/json']})(req, res, next);
   }
 }
 
@@ -342,3 +338,7 @@ module.exports.setDb = mock => db = mock;
 module.exports.handleError = handleError;
 module.exports.clientError = clientError;
 module.exports.serverError = serverError;
+module.exports.sendTextErrorCode = sendTextErrorCode;
+module.exports.notFound = notFound;
+module.exports.sendHTMLErrorCode = sendHTMLErrorCode;
+module.exports.sendJSONErrorCode = sendJSONErrorCode;

@@ -4,7 +4,8 @@ const _startCase = require('lodash/startCase'),
   _noop = require('lodash/noop'),
   passport = require('passport'),
   filename = __filename.split('/').pop().split('.').shift(),
-  lib = require(`./${filename}`);
+  lib = require(`./${filename}`),
+  strategyService = require('./strategies');
 
 describe(_startCase(filename), function () {
   describe('isProtectedRoute', function () {
@@ -146,6 +147,56 @@ describe(_startCase(filename), function () {
 
       fn({ prefix: 'domain.com' })({ logout: _noop }, res);
       expect(res.redirect).toBeCalledWith('http://domain.com/_auth/login');
+    });
+  });
+
+  describe('init', function () {
+    const router = { use: jest.fn(), get: jest.fn() },
+      options = {
+        router,
+        site: {
+          prefix: 'foo.com',
+          protocol: 'http',
+          port: 80
+        },
+        providers: ['apikey', 'google']
+      };
+
+    it('returns if no providers are passed in', function () {
+      expect(lib({})).toEqual([]);
+    });
+
+    it('should set required middlewares', function () {
+      strategyService.createStrategy = jest.fn();
+      strategyService.addAuthRoutes = jest.fn();
+
+      lib(options);
+
+      // Should call router use 7 times to set the required middlewares
+      expect(router.use).toBeCalledTimes(7);
+    });
+
+    it('should add authorization routes', function () {
+      lib(options);
+
+      expect(router.get).toBeCalledTimes(2);
+      expect(router.get).toBeCalledWith('/_auth/login', expect.any(Function));
+      expect(router.get).toBeCalledWith('/_auth/logout', expect.any(Function));
+    });
+  });
+
+  describe('addUser', function () {
+    const fn = lib[this.description];
+
+    it('should add user data to the response', function () {
+      const next = jest.fn(),
+        res = { locals: { user: {} } },
+        req = { user: { username: 'foo', provider: 'bar' } };
+
+      fn(req, res, next);
+
+      expect(res.locals.user).toEqual(req.user);
+      expect(next).toBeCalled();
     });
   });
 });
