@@ -75,6 +75,7 @@ function protectRoutes(site) {
 function onLogin(site, currentProviders) {
   return function (req, res) {
     const template = compileLoginPage(),
+      authUrl = getAuthUrl(site),
       flash = req.flash();
 
     if (flash && _includes(flash.error, 'Invalid username/password')) {
@@ -96,7 +97,8 @@ function onLogin(site, currentProviders) {
         flash: flash,
         currentProviders: currentProviders,
         user: req.user,
-        logoutLink: `${getAuthUrl(site)}/logout`
+        logoutLink: `${authUrl}/logout`,
+        localAuthPath: `${authUrl}/local`
       }));
     }
   };

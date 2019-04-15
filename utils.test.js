@@ -78,8 +78,8 @@ describe(_startCase(filename), function () {
       expect(fn({ path: '' })).toEqual('/');
     });
 
-    it('adds trailing slash if site path exists', function () {
-      expect(fn({ path: '/foo'})).toEqual('/foo/');
+    it('returns site path if it exists', function () {
+      expect(fn({ path: '/foo'})).toEqual('/foo');
     });
   });
 

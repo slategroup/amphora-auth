@@ -46,7 +46,7 @@ function getAuthUrl(site) {
  * @returns {string}
  */
 function getPathOrBase(site) {
-  return site.path ? `${site.path}/` : '/';
+  return site.path || '/';
 }
 
 /**
