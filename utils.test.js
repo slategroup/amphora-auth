@@ -75,7 +75,7 @@ describe(_startCase(filename), function () {
     const fn = lib[this.description];
 
     it('adds initial slash if site path is emptystring', function () {
-      expect(fn({ path: '' })).toEqual('/');
+      expect(fn()).toEqual('/');
     });
 
     it('returns site path if it exists', function () {
