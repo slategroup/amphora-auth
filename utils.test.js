@@ -75,11 +75,11 @@ describe(_startCase(filename), function () {
     const fn = lib[this.description];
 
     it('adds initial slash if site path is emptystring', function () {
-      expect(fn({ path: '' })).toEqual('/');
+      expect(fn()).toEqual('/');
     });
 
-    it('adds trailing slash if site path exists', function () {
-      expect(fn({ path: '/foo'})).toEqual('/foo/');
+    it('returns site path if it exists', function () {
+      expect(fn({ path: '/foo'})).toEqual('/foo');
     });
   });
 

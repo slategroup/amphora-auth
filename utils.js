@@ -45,8 +45,8 @@ function getAuthUrl(site) {
  * @param {object} site
  * @returns {string}
  */
-function getPathOrBase(site) {
-  return site.path ? `${site.path}/` : '/';
+function getPathOrBase(site = {}) {
+  return site.path || '/';
 }
 
 /**
