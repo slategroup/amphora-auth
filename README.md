@@ -17,6 +17,7 @@ Then, call the module when setting up the routes for Amphora by passing the requ
 amphoraAuth({
   router // Site router
   providers, // Authentication providers
+  store, // Redis Session Store
   site, // Site metadata
   storage, // DB instance
   bus // Redis bus instance
