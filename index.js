@@ -198,8 +198,12 @@ function init({ router, providers, store, site, storage, bus }) {
   return currentProviders; // for testing/verification
 }
 
+/**
+ * Adds authentication middlewares to the router
+ *
+ * @param {Object} router
+ */
 function useAuth(router) {
-  if (!authMiddlewares.length) throw new Error('Please initialize amphora-auth');
   authMiddlewares.forEach(middleware => router.use(middleware));
 }
 
