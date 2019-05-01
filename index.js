@@ -171,7 +171,6 @@ function init({ router, providers, store, site, storage, bus }) {
     protectRoutesMiddleware = protectRoutes(site),
     checkAuthenticationMiddleware = checkAuthentication(site);
 
-
   strategyService.createStrategy(providers, site); // allow mocking this in tests
 
   // init session authentication
