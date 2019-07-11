@@ -13,7 +13,8 @@ const _get = require('lodash/get'),
   references = require('./services/references'),
   { isValidPassword } = require('./services/encrypt');
 
-let db = require('./services/storage');
+let db = require('./services/storage'),
+  bus = require('./services/bus');
 
 /**
  * encode username and provider to base64
@@ -97,6 +98,9 @@ function verify(properties) {
                 return done(null, false, { message: 'Invalid Password' });
               }
 
+              data._ref = uid;
+
+              bus.publish('saveUser', { key: uid, value: data }); // Tell elastic about any update changes to maintain data consistency
               return done(null, data);
             })
             .catch(e => done(e));
@@ -254,5 +258,6 @@ module.exports.getUri = getUri;
 
 // For testing purposes
 module.exports.setDb = mock => db = mock;
+module.exports.setBus = mock => bus = mock;
 module.exports.removeQueryString = removeQueryString;
 module.exports.removeExtension = removeExtension;
