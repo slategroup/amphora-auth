@@ -3,7 +3,7 @@
 let bus; // Redis bus passed from Amphora. Assigned value at initialization
 
 /**
- * Retrieves an item from the database.
+ * Publishes an event to the bus.
  * @param {string} eventName
  * @param {Object} data
  */

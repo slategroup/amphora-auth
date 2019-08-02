@@ -99,6 +99,7 @@ function verify(properties) {
               }
 
               data._ref = uid;
+              delete data.password;
 
               bus.publish('saveUser', { key: uid, value: data }); // Tell elastic about any update changes to maintain data consistency
               return done(null, data);
