@@ -2,6 +2,7 @@
 
 const STRATEGIES = {
   apikey: require('./key'),
+  cognito: require('./cognito'),
   google: require('./google'),
   ldap: require('./ldap'),
   twitter: require('./twitter'),
