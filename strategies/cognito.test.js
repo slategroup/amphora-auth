@@ -13,7 +13,7 @@ describe(_startCase(filename), function () {
     it('creates cognito strategy', function () {
       passport.use = jest.fn();
 
-      process.env.COGNITO_CONSUMER_CLIENT = '123';
+      process.env.COGNITO_CONSUMER_KEY = '123';
       process.env.COGNITO_CONSUMER_SECRET = '456';
       process.env.COGNITO_PROFILE_URL = 'http://foo.com',
       lib(siteStub);

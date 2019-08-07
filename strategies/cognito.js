@@ -20,7 +20,7 @@ function createCognitoStrategy(site) {
     `cognito-${site.slug}`,
     new CognitoStrategy({
       clientDomain: process.env.COGNITO_CONSUMER_DOMAIN,
-      clientID: process.env.COGNITO_CONSUMER_CLIENT,
+      clientID: process.env.COGNITO_CONSUMER_KEY,
       clientSecret: process.env.COGNITO_CONSUMER_SECRET,
       callbackURL: getCallbackUrl(site, 'cognito'),
       passReqToCallback: true,
