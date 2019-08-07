@@ -10,7 +10,7 @@ const passport = require('passport'),
  */
 function createLocalStrategy(site) {
   passport.use(
-    `local-${site.amphoraKey || site.slug}`,
+    `local-${site.subsiteSlug || site.slug}`,
     new LocalStrategy({ passReqToCallback: true }, verifyLocal())
   );
 }

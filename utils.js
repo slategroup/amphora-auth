@@ -182,7 +182,7 @@ function getProviders(providers, site) {
  * @returns {string}
  */
 function generateStrategyName(provider, site) {
-  return `${provider}-${site.amphoraKey || site.slug}`;
+  return `${provider}-${site.subsiteSlug || site.slug}`;
 }
 
 /**

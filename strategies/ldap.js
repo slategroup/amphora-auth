@@ -29,7 +29,7 @@ function verifyLdap() {
  * @param {object} site
  */
 function createLDAPStrategy(site) {
-  passport.use(`ldap-${site.amphoraKey || site.slug}`, new LDAPStrategy({
+  passport.use(`ldap-${site.subsiteSlug || site.slug}`, new LDAPStrategy({
     server: {
       url: process.env.LDAP_URL,
       adminDn: process.env.LDAP_BIND_DN,

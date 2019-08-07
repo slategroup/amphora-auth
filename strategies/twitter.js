@@ -16,7 +16,7 @@ const passport = require('passport'),
  * @param {object} site
  */
 function createTwitterStrategy(site) {
-  passport.use(`twitter-${site.amphoraKey || site.slug}`, new TwitterStrategy({
+  passport.use(`twitter-${site.subsiteSlug || site.slug}`, new TwitterStrategy({
     consumerKey: process.env.TWITTER_CONSUMER_KEY,
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
     callbackURL: getCallbackUrl(site, 'twitter'),
