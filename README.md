@@ -31,6 +31,7 @@ This module provides local authentication in Clay with a username and password a
 - Google
 - Twitter
 - Slack
+- Cognito
 - LDAP
 
 To get started editing in Clay, create a user account. The easiest way to do this is to create a `user.yml` file that looks like this:
@@ -69,6 +70,11 @@ export GOOGLE_CONSUMER_SECRET=<GOOGLE_CONSUMER_SECRET>
 
 export SLACK_CONSUMER_KEY=<SLACK_CONSUMER_KEY>
 export SLACK_CONSUMER_SECRET=<SLACK_CONSUMER_SECRET>
+
+export COGNITO_CONSUMER_KEY=<COGNITO_CLIENT_ID>
+export COGNITO_CONSUMER_SECRET=<COGNITO_SECRET>
+export COGNITO_CONSUMER_DOMAIN=<COGNITO_AUTHENICATION_DOMAIN>
+export COGNITO_CONSUMER_REGION=<COGNITO_INSTANCE_REGION>
 
 export LDAP_URL=<LDAP_URL>
 export LDAP_BIND_DN=<LDAP_BIND_DN>
