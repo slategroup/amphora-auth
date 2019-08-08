@@ -17,7 +17,7 @@ const passport = require('passport'),
  */
 function createCognitoStrategy(site) {
   passport.use(
-    `cognito-${site.slug}`,
+    `cognito-${site.subsiteSlug || site.slug}`,
     new CognitoStrategy({
       clientDomain: process.env.COGNITO_CONSUMER_DOMAIN,
       clientID: process.env.COGNITO_CONSUMER_KEY,
