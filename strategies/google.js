@@ -16,7 +16,7 @@ const passport = require('passport'),
  * @param {object} site
  */
 function createGoogleStrategy(site) {
-  passport.use(`google-${site.slug}`, new GoogleStrategy({
+  passport.use(`google-${site.subsiteSlug || site.slug}`, new GoogleStrategy({
     clientID: process.env.GOOGLE_CONSUMER_KEY,
     clientSecret: process.env.GOOGLE_CONSUMER_SECRET,
     callbackURL: getCallbackUrl(site, 'google'),

@@ -16,7 +16,7 @@ const passport = require('passport'),
  * @param {object} site
  */
 function createSlackStrategy(site) {
-  passport.use(`slack-${site.slug}`, new SlackStrategy({
+  passport.use(`slack-${site.subsiteSlug || site.slug}`, new SlackStrategy({
     clientID: process.env.SLACK_CONSUMER_KEY,
     clientSecret: process.env.SLACK_CONSUMER_SECRET,
     callbackURL: getCallbackUrl(site, 'slack'),
