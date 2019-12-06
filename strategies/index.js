@@ -7,7 +7,8 @@ const STRATEGIES = {
   ldap: require('./ldap'),
   twitter: require('./twitter'),
   slack: require('./slack'),
-  local: require('./local')
+  local: require('./local'),
+  okta: require('./okta')
 };
 
 /**
@@ -28,6 +29,7 @@ function createStrategy(providers, site) {
     if (provider !== 'apikey') STRATEGIES[provider](site);
   });
 }
+
 /**
  * add authorization routes to the router
  * @param {string[]} providers

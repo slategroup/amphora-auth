@@ -25,6 +25,7 @@
     "passport-http-header-token": "^1.1.0",
     "passport-ldapauth": "^2.1.1",
     "passport-local": "^1.0.0",
+    "passport-saml": "^1.2.0",
     "passport-slack": "0.0.7",
     "passport-twitter": "^1.0.4",
     "through2-map": "^3.0.0"
