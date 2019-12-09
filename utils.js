@@ -66,7 +66,8 @@ function getCallbackUrl(site, provider) {
  * @returns {Promise}
  */
 function verify(properties) {
-  return function (req, token, tokenSecret, profile, done) { // eslint-disable-line
+  return function(req, token, tokenSecret, profile, done) {
+    // eslint-disable-line
     const username = _get(profile, properties.username),
       imageUrl = _get(profile, properties.imageUrl, ''),
       name = _get(profile, properties.name, ''),
@@ -82,7 +83,8 @@ function verify(properties) {
 
     if (!req.user) {
       // first time logging in! update the user data
-      return db.get(uid)
+      return db
+        .get(uid)
         .then(data => {
           // only update the user data if the property doesn't exist (name might have been changed through the kiln UI)
           return _defaults(data, {
@@ -91,7 +93,8 @@ function verify(properties) {
           });
         })
         .then(data => {
-          return db.put(uid, JSON.stringify(data))
+          return db
+            .put(uid, JSON.stringify(data))
             .then(() => {
               if (password && !isValidPassword(data, password)) {
                 return done(null, false, { message: 'Invalid Password' });
@@ -104,7 +107,8 @@ function verify(properties) {
         .catch(() => done(null, false, { message: 'User not found!' })); // no user found
     } else {
       // already authenticated. just grab the user data
-      return db.get(uid)
+      return db
+        .get(uid)
         .then(data => {
           if (password && !isValidPassword(data, password)) {
             return done(null, false, { message: 'Invalid Password' });
@@ -113,6 +117,68 @@ function verify(properties) {
           return done(null, data);
         })
         .catch(() => done(null, false, { message: 'User not found!' })); // no user found
+    }
+  };
+}
+
+/**
+ *
+ * @param {Object} properties to get from profile response from identity provider
+ */
+function verifySaml(properties) {
+  return function(req, profile, done) {
+    console.log('PROFILE', ...profile);
+
+    const username = _get(profile, properties.username),
+      // imageUrl = _get(profile, properties.imageUrl, ''),
+      // name = _get(profile, properties.name, ''),
+      // password = _get(profile, properties.password, ''),
+      provider = properties.provider;
+
+    if (!username) {
+      throw new Error(`Provider hasn't given a username at ${properties.username}`);
+    }
+
+    // get UID
+    let uid = `/_users/${encode(username.toLowerCase(), provider)}`;
+
+    console.log('UID', uid);
+    console.log('REQ USER', req.user);
+
+    if (!req.user) {
+      console.log('HERE 1');
+      // first time logging in! update the user data
+      return db
+        .get(uid)
+        .then(data => {
+          return db
+            .put(uid, JSON.stringify(data))
+            .then(() => {
+              // if (password && !isValidPassword(data, password)) {
+              //   return done(null, false, { message: 'Invalid Password' });
+              // }
+
+              return done(null, data);
+            })
+            .catch(e => done(e));
+        })
+        .catch(() => done(null, false, { message: 'User not found!' })); // no user found
+    } else {
+      // already authenticated. just grab the user data
+      console.log('HERE 2');
+
+      return db
+        .get(uid)
+        .then(data => {
+          // if (password && !isValidPassword(data, password)) {
+          //   return done(null, false, { message: 'Invalid Password' });
+          // }
+
+          console.log('DATA FROM DB', data);
+
+          return done(null, data);
+        })
+        .catch(() => done(null, false, { message: 'User not found! AGAIN' })); // no user found
     }
   };
 }
@@ -152,7 +218,8 @@ function serializeUser(user, done) {
  * @returns {Promise<void>}
  */
 function deserializeUser(uid, done) {
-  return db.get(`/_users/${uid}`)
+  return db
+    .get(`/_users/${uid}`)
     .then(user => done(null, user))
     .catch(e => done(e));
 }
@@ -191,7 +258,9 @@ function generateStrategyName(provider, site) {
  * @returns {function}
  */
 function compileTemplate(filename) {
-  return handlebars.compile(fs.readFileSync(path.resolve(__dirname, '.', 'views', filename), { encoding: 'utf-8' }));
+  return handlebars.compile(
+    fs.readFileSync(path.resolve(__dirname, '.', 'views', filename), { encoding: 'utf-8' })
+  );
 }
 
 /**
@@ -219,9 +288,7 @@ function normalizePath(path) {
  */
 function removeExtension(path) {
   let endSlash = path.lastIndexOf('/'),
-    leadingDot = endSlash > -1
-      ? path.indexOf('.', endSlash)
-      : path.indexOf('.');
+    leadingDot = endSlash > -1 ? path.indexOf('.', endSlash) : path.indexOf('.');
 
   if (leadingDot > -1) {
     path = path.substr(0, leadingDot);
@@ -244,6 +311,7 @@ module.exports.getPathOrBase = getPathOrBase;
 module.exports.getAuthUrl = getAuthUrl;
 module.exports.getCallbackUrl = getCallbackUrl;
 module.exports.verify = verify;
+module.exports.verifySaml = verifySaml;
 module.exports.removePrefix = removePrefix;
 module.exports.serializeUser = serializeUser;
 module.exports.deserializeUser = deserializeUser;
@@ -253,6 +321,6 @@ module.exports.compileTemplate = compileTemplate;
 module.exports.getUri = getUri;
 
 // For testing purposes
-module.exports.setDb = mock => db = mock;
+module.exports.setDb = mock => (db = mock);
 module.exports.removeQueryString = removeQueryString;
 module.exports.removeExtension = removeExtension;
