@@ -2,7 +2,13 @@
 
 const passport = require('passport'),
   SamlStrategy = require('passport-saml').Strategy,
-  { verify, getAuthUrl, getPathOrBase, getCallbackUrl, generateStrategyName } = require('../utils');
+  {
+    verifySaml,
+    getAuthUrl,
+    getPathOrBase,
+    getCallbackUrl,
+    generateStrategyName
+  } = require('../utils');
 
 /**
  * SAML authentication strategy
@@ -11,18 +17,17 @@ const passport = require('passport'),
  */
 function createOktaStrategy(site) {
   passport.use(
-    `okta-${site.subsiteSlug || site.slug}`,
+    generateStrategyName('okta', site),
     new SamlStrategy(
       {
         callbackURL: getCallbackUrl(site, 'okta'),
-        entrypoint: '',
+        entryPoint: '',
         cert: '',
-        issuer: 'clay' // string to supply to IDP
+        issuer: 'clay',
+        passReqToCallback: true
       },
-      verify({
-        username: 'emails[0].value',
-        imageUrl: 'photos[0].value',
-        name: 'displayName',
+      verifySaml({
+        username: 'nameID',
         provider: 'okta'
       })
     )
