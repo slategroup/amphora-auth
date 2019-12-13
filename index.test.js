@@ -30,6 +30,10 @@ describe(_startCase(filename), function () {
     it('is false if GET to api (or non-edit page)', function () {
       expect(fn({ query: {}, method: 'GET' })).toEqual(false);
     });
+
+    it('is false if HEAD to api (or non-edit page)', function () {
+      expect(fn({ query: {}, method: 'HEAD' })).toEqual(false);
+    });
   });
 
   describe('isAuthenticated', function () {
