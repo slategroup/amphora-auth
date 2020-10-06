@@ -75,6 +75,30 @@ describe(_startCase(filename), function () {
       });
     });
 
+    it('disallows api key when CLAY_ACCESS_KEY is empty', function (done) {
+      const { apiCallback } = require(`./${filename}`);
+
+      process.env.CLAY_ACCESS_KEY = '';
+      apiCallback('', function (err, data, status) {
+        expect(err).toEqual(null);
+        expect(data).toEqual(false);
+        expect(status.message).toEqual('Unknown apikey: ');
+        done();
+      });
+    });
+
+    it('disallows api key when CLAY_ACCESS_KEY is not set', function (done) {
+      const { apiCallback } = require(`./${filename}`);
+
+      delete process.env.CLAY_ACCESS_KEY;
+      apiCallback('undefined', function (err, data, status) {
+        expect(err).toEqual(null);
+        expect(data).toEqual(false);
+        expect(status.message).toEqual('Unknown apikey: undefined');
+        done();
+      });
+    });
+
   });
 
   describe('createAPIKeyStrategy', function () {
