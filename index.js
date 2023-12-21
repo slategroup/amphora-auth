@@ -196,6 +196,14 @@ function init({ router, providers, store, site, storage, bus }) {
   router.use(checkAuthentication(site));
   router.use(addUser);
 
+  router.use((req, res, next) => {
+    console.log('req.session', req.session)
+    if (req.session && !req.session.passport) {
+      // remove from redis & req.session (and possibly set-cookie)
+    }
+    next();
+  })
+
   return currentProviders; // for testing/verification
 }
 
